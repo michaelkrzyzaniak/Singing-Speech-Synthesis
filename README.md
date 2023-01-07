@@ -116,8 +116,7 @@ singer = singDestroy(singer);
 ##### Fill Buffer
 ```c
 void       singFillBuffer               (Singer* self, float* buffer, int numSamples);
-
-'''
+```
 Fill an empty buffer with an audio waveform containing the next bit of the beautiful melodious sounds of robot singing voice.
 Args:
 *self: the singer object that you previously created with singNew();
@@ -130,7 +129,7 @@ Args:
 ```c
 void       singSetAllophone             (Singer* self, alloSymbol_t symbol );
 Allophone* singCurrentAllophone         (Singer* self                      );
-'''
+```
 Set or get the current allophone. Setting the allophone causes the singer to sing that sound. Getting it tells you what sound the singer is currently singing.
 Args:
 *self: the singer object that you previously created with singNew();
@@ -163,21 +162,21 @@ Instead of seting allophones one at a time, you can program in a whole song by e
 ```c
 void       singSetAllophoneGlideTime    (Singer* self, float coefficient   );
 float      singAllophoneGlideTime       (Singer* self                      );
-'''
+```
 The algorithm will quickly interpolate between successive allophones. The coefficient should be betweeen 0 and 1, with higher values indicating a longer transition time. Default is 0.6.
 
 #####
 ```c
 char**     singSupportedAllophones      (Singer* self, int* returnedNumAllophones); /*caller must free retunred array when done (but not the strings therein)*/
 void       singPrintSupportedAllophones (Singer* self                      );
-'''
+```
 Get or print a list of supported allophones. Printing the list will also tell you if the algorithm considers each allophone to be a plosive, fricative, or vowel. It also prints the bytes representting the allophone symbols, which can be useful if the allophone has a filename such as ð.aiff and there are char eencoding issues. 
 
 #####
 ```c
 void       singSetConsonantDuration     (Singer* self, float millisecs     );
 float      singConsonantDuration        (Singer* self                      );
-'''
+```
 
 ## Pitch Loudness and Timbre
 #####
@@ -187,7 +186,7 @@ float      singFreq                     (Singer* self                      );
 void       singSetPitch                 (Singer* self, float midiNumber, BOOL shouldTriggerVibrato);
 float      singPitch                    (Singer* self                      );
 void       singSetFreqGlideTime         (Singer* self, float coefficient   );
-'''
+```
 Get or set the pitch that the singer sings. By default the singer will glide to the new pitch and optionally re-start its vibrato.
 Args:
 *cps: the desired frequency in cycles per second where 440 represeents A above middle C.
@@ -200,7 +199,7 @@ Args:
 ```c
 void       singSetFreqDrift             (Singer* self, float percent       );
 float      singFreqDrift                (Singer* self                      );
-'''
+```
 By default the singer will gradually drift in pitch when it sings a sustained note. 
 Args:
 *percent: Should be betweeen 0 and 100, with 0 indicating no drift, and higher values indicating more drift. Default is 0.0015. Note that the drift is unbounded over time.
@@ -220,7 +219,7 @@ float      singVibratoDepthDrift        (Singer* self                      );
 void       singSetVibratoOnsetTime      (Singer* self, float coefficient   );
 float      singVibratoOnsetTime         (Singer* self                      );
 void       singTriggerVibrato           (Singer* self                      );
-'''
+```
 Control the singer's vibrato. Default rate is 6 Hz. Default depth is 1, indicating plus or minus 1 percent of current pitch. Both the rate and depth drift over time to make it sound more natural. Default rate drift coeficient is 0.05, default depth drift coefficient is 0.1. Setting either coefficient to 0 turns it off, with higher values meaning more drift. Note that the drift is unbounded over time. By default the singer will start singing straight and gradually increase the vibrato depth. Thee vibrato onset time controls how long it takes to achieve full vibrato depth. Default is 0.999992, with 0  indicating immediate onset and higher values (less than 1) indicating longer onseet time. By default the vibrato will just keep going forever, but calling singTriggerVibrato() resets all of the drift values and makes the singer sing straight, gradually bringing in the vibrato again. Triggering the vibrrato can also be done by passing YES to the shouldTriggerVibrato argument of singSetFreq() or singSetPitch();
 
 #####
@@ -229,7 +228,7 @@ void       singSetLoudness              (Singer* self, float amp           );
 float      singLoudness                 (Singer* self                      );
 void       singSetLoudnessGlideTime     (Singer* self, float coefficient   );
 float      singLoudnessGlideTime        (Singer* self                      );
-'''
+```
 
 Get or set the amplitude (not perceptual loudness) of the output. In principal it should be between 0 and 1, default is 1. Lower it if the output is clipping. By default the algorithm will quickly interpolate to the new loudness to avoid clicks in the audio stream. The glide coefficient should be between 0 and 1 with 0 meaning no interpolation and higher values indicating longer time to reach tthe specified amplitude. Default is 0.999.
 
@@ -240,26 +239,26 @@ Get or set the amplitude (not perceptual loudness) of the output. In principal i
 ```c
 void       singSetPlosiveCrunchiness    (Singer* self, float crunchiness   );
 float      singPlosiveCrunchiness       (Singer* self                      );
-'''
+```
 
 
 #####
 ```c
 void       singSetBreathiness           (Singer* self, float breathiness   );
 float      singBreathiness              (Singer* self                      );
-'''
+```
 
 #####
 ```c
 void       singSetNoiseSmoothing        (Singer* self, float coefficient   );
 float      singNoiseSmoothing           (Singer* self                      );
-'''
+```
 
 
 #####
 ```c
 void       singSetRelativeVowelVolume   (Singer* self, float coefficient   );
-'''
+```
 
 #####
 ```c
@@ -267,19 +266,19 @@ void       singSetRoughness             (Singer* self, float coefficient   );
 float      singRoughness                (Singer* self                      );
 void       singSetRoughnessFreq         (Singer* self, float cps           );
 float      singRoughnessFreq            (Singer* self                      );
-'''
+```
 
 
 #####
 ```c
 void       singSetBrightness            (Singer* self, float coefficient   ); //-1 ~ 1, 0 is unaltered, neg is darker
 float      singBrightness               (Singer* self                      );
-'''
+```
 
 #####
 ```c
 void       singShutYerPieHole           (Singer* self                      ); 
-'''
+```
 
 
 #####
@@ -290,4 +289,4 @@ void       singSetRestChar              (Singer* self, char c              );
 char       singRestChar                 (Singer* self                      );
 void       singSetHoldChar              (Singer* self, char c              );
 char       singHoldChar                 (Singer* self                      );
-'''
+```
