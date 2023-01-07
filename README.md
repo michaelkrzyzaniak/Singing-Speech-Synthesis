@@ -119,9 +119,9 @@ void       singFillBuffer               (Singer* self, float* buffer, int numSam
 ```
 Fill an empty buffer with an audio waveform containing the next bit of the beautiful melodious sounds of robot singing voice.
 Args:
-*self: the singer object that you previously created with singNew();
-*buffer: and empty array where you want audio samples to be written
-*numSamples: the size of the audio buffer, I don't exactly remember the rationale, but it should probably be the same size as the undrelying ffts, which is controlled by the bufferNumSamples argument to singNew(); So whatever value you used there maybe consider using the same value here.
+* self: the singer object that you previously created with singNew();
+* buffer: and empty array where you want audio samples to be written
+* numSamples: the size of the audio buffer, I don't exactly remember the rationale, but it should probably be the same size as the undrelying ffts, which is controlled by the bufferNumSamples argument to singNew(); So whatever value you used there maybe consider using the same value here.
 
 
 ## Allophones
@@ -132,8 +132,8 @@ Allophone* singCurrentAllophone         (Singer* self                      );
 ```
 Set or get the current allophone. Setting the allophone causes the singer to sing that sound. Getting it tells you what sound the singer is currently singing.
 Args:
-*self: the singer object that you previously created with singNew();
-*symbol: This should be a null terrminated character array (not a constant string) that represents the filename of the corresponding allophone recording. For example
+* self: the singer object that you previously created with singNew();
+* symbol: This should be a null terrminated character array (not a constant string) that represents the filename of the corresponding allophone recording. For example
 ```c
 Singer* singer = singNew("/audio/wavetables/Cello_41.aiff", "audio/tenor_allophones/", 44100, 512);
 char[] allo = "foo"; //sing and stop
