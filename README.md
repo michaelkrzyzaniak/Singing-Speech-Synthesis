@@ -100,10 +100,10 @@ Singer*    singNew(char* pathToWavetableAiff, char* pathToAllophoneAiffs, double
 ```
 Create a new Singer object.
 Args: 
-*pathToWavetableAiff: path of an aiff or wave file containing a single cycle of a waveform that will be used as the basis of wavetable synthesis. Try "/audio/wavetables/Cello_41.aiff".
-*pathToAllophoneAiffs: path of a folder containing allophone recordings. "audio/tenor_allophones/". Silence should be trimmed off the begining and end of the recording. In principal the software could be made to do this in the future and if you send me some cookies I might do that. The file extension should be .aif or .aiff, but wave files should work just so long as they have the (wrong) .aif extension.
-*sampleRate your desired audio sample rate, perhaps 44100 would be a good choice.
-*bufferNumSamples this controls the size of the underlying FFTs. It could be anythhing but maybe try a power of 2 somewhere between 128 and 4096.
+* pathToWavetableAiff: path of an aiff or wave file containing a single cycle of a waveform that will be used as the basis of wavetable synthesis. Try "/audio/wavetables/Cello_41.aiff".
+* pathToAllophoneAiffs: path of a folder containing allophone recordings. "audio/tenor_allophones/". Silence should be trimmed off the begining and end of the recording. In principal the software could be made to do this in the future and if you send me some cookies I might do that. The file extension should be .aif or .aiff, but wave files should work just so long as they have the (wrong) .aif extension.
+* sampleRate your desired audio sample rate, perhaps 44100 would be a good choice.
+* bufferNumSamples this controls the size of the underlying FFTs. It could be anythhing but maybe try a power of 2 somewhere between 128 and 4096.
 
 
 ##### Destroy
@@ -189,10 +189,10 @@ void       singSetFreqGlideTime         (Singer* self, float coefficient   );
 ```
 Get or set the pitch that the singer sings. By default the singer will glide to the new pitch and optionally re-start its vibrato.
 Args:
-*cps: the desired frequency in cycles per second where 440 represeents A above middle C.
+* cps: the desired frequency in cycles per second where 440 represeents A above middle C.
 *midiNumber: the desired frequency expressed as a MIDI note number where 69 represents A above middle C, and incrementing or decrementing by one always raises or lowers by a half step. Note that non-integer MIDI note numbers are also possible for that sweet sweet microtonal music.
-*shouldTriggerVibrato: should be YES or NO (as a constant, not a string). By default the singer starts singing straight and then gradually adds vibrato which drifts in amplitude and frequency. If the singer is already singing vibrato, then passing NO here makes the singer continue its vibrato through the change of notes. Passing YES causes it to quit its vibrato and sing the begining  of the note straight before gradually adding vibrato again. There are a separate set of functions that allow you to change the vibrato behaviour or turn it off.
-*coefficient: controls how quickly the singer glides to the nwe note. Should be betweeen 0 and 1, where 0 means no glide (jumps to the new note) and higher values indicate a longer glide. Default is 0.999. 
+* shouldTriggerVibrato: should be YES or NO (as a constant, not a string). By default the singer starts singing straight and then gradually adds vibrato which drifts in amplitude and frequency. If the singer is already singing vibrato, then passing NO here makes the singer continue its vibrato through the change of notes. Passing YES causes it to quit its vibrato and sing the begining  of the note straight before gradually adding vibrato again. There are a separate set of functions that allow you to change the vibrato behaviour or turn it off.
+* coefficient: controls how quickly the singer glides to the nwe note. Should be betweeen 0 and 1, where 0 means no glide (jumps to the new note) and higher values indicate a longer glide. Default is 0.999. 
 
 
 #####
@@ -202,7 +202,7 @@ float      singFreqDrift                (Singer* self                      );
 ```
 By default the singer will gradually drift in pitch when it sings a sustained note. 
 Args:
-*percent: Should be betweeen 0 and 100, with 0 indicating no drift, and higher values indicating more drift. Default is 0.0015. Note that the drift is unbounded over time.
+* percent: Should be betweeen 0 and 100, with 0 indicating no drift, and higher values indicating more drift. Default is 0.0015. Note that the drift is unbounded over time.
 
 
 
