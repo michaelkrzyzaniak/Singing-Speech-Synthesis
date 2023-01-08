@@ -152,11 +152,28 @@ List*      singEnqueuedAllophones       (Singer* self                      );
 void       singTriggerNextAllophone     (Singer* self                      );
 void       singTriggerNextVowel         (Singer* self                      );
 
+void       singSetAllophoneSeparatorChar(Singer* self, char c              );
+char       singAllophoneSeparatorChar   (Singer* self                      );
+void       singSetRestChar              (Singer* self, char c              );
+char       singRestChar                 (Singer* self                      );
+void       singSetHoldChar              (Singer* self, char c              );
+char       singHoldChar                 (Singer* self                      );
+
+typedef void (*singEventCallback_t)     (void* userData, Allophone* allo);
 void       singSetAllophoneCallback     (Singer* self, singEventCallback_t callback, void* callbackArg);
 void       singSetQueueEmptyCallback    (Singer* self, singEventCallback_t callback, void* callbackArg);
 
 '''
-Instead of seting allophones one at a time, you can program in a whole song by enqueuing a list of allophones. See the code snipit at the top of this document for  more information on how this works. Note that the argument symbols should be a character array and not a string constant.
+Instead of setting allophones one at a time, you can program in a whole song by enqueuing a list of allophones. See the code snipit at the top of this document for more information on how this works. 
+
+Args:
+* symbols: A character array (not a string constant) containing the allophones. It should be of the form: "a-|m|a-|r|i-|l|i-|m|i|a-| |b|e-|l|a-| -"; By default the pipe charcter | separates allophones, the space character indicates a rest, and the dash character - indicates a hold (sustain). These can be changed with singSetAllophoneSeparatorChar(), singSetRestChar(), and singSetHoldChar(); The enqueued allophones can either be triggered one by one using singTriggerNextAllophone(), in which case the singer will simply sing the next allophone and then wait to be retriggered. Or it can sing through the consonants and pause on the next sustained note (usually a vowel) by using singTriggerNextVowel(). In this latter mode, whenever the next allophone is triggered, the singer will sing the next enqueued allophones in rapid succeession until it encounters a dash, then it will sustain and wait to be riggered again. Note that a rest may or may note be sustained. If a plosive is 'sustained', the singer will sing the plosive and then sustain silence. 
+
+You can get notifications when each allophone is triggered or when the queue is empty, using the respective callbacks. 
+* callbackArg can be anything that will be passed back to you as userData when the callback is called. 
+* allo will be the allophone that is going to be sung next, whereas calling singCurrentAllophone() from the callback will get the allophone that has just finished. Moe information about what can be done with the passed Allophone object is in lib/Allophone.h. Notably you can get the string representation of the allophone with alloSymbol(allo);
+
+
 
 #####
 ```c
@@ -230,7 +247,7 @@ void       singSetLoudnessGlideTime     (Singer* self, float coefficient   );
 float      singLoudnessGlideTime        (Singer* self                      );
 ```
 
-Get or set the amplitude (not perceptual loudness) of the output. In principal it should be between 0 and 1, default is 1. Lower it if the output is clipping. By default the algorithm will quickly interpolate to the new loudness to avoid clicks in the audio stream. The glide coefficient should be between 0 and 1 with 0 meaning no interpolation and higher values indicating longer time to reach tthe specified amplitude. Default is 0.999.
+Get or set the amplitude (not perceptual loudness) of the output. In principal it should be between 0 and 1, default is 1. Lower it if the output is clipping. By default the algorithm will quickly interpolate to the new loudness to avoid clicks in the audio stream. The glide coefficient should be between 0 and 1 with 0 meaning no interpolation and higher values indicating longer time to reach tthe specified amplitude. Default is 0.999. Consider increasing brightness when you increase loudness, see note at singSetBrightness() below.
 
 
 
@@ -240,25 +257,27 @@ Get or set the amplitude (not perceptual loudness) of the output. In principal i
 void       singSetPlosiveCrunchiness    (Singer* self, float crunchiness   );
 float      singPlosiveCrunchiness       (Singer* self                      );
 ```
-
+This controls the amplitude of noise in plosives and fricatives. Default is 2.5.
 
 #####
 ```c
 void       singSetBreathiness           (Singer* self, float breathiness   );
 float      singBreathiness              (Singer* self                      );
 ```
+This controls the amplitude of noise in vowels. Default is 4. RRange is 0 to 100.
 
 #####
 ```c
 void       singSetNoiseSmoothing        (Singer* self, float coefficient   );
 float      singNoiseSmoothing           (Singer* self                      );
 ```
-
+When the singer transitions from one allophone to another, the amount of noisiness depends on 1) the intrinsic noisiness of the allophone recording, and 2) the settings of singSetBreathiness() or singSetPlosiveCrunchiness(). To smooth out the transition, thee singer can interpolate between the noise levels. By default, coefficient is 0 meaning there is no interpolation and the transition is immediate. Larger coefficient meeans longer transition. Must be less than one.
 
 #####
 ```c
 void       singSetRelativeVowelVolume   (Singer* self, float coefficient   );
 ```
+Seet the amplitude of vowels relative to consonants. Should be 0 to 1 inclusive. Higher values make louder vowels. If coefficient is less than 0.5 this is accomplished by raising the amplitude of consonants, otherwise it raises the amplitude of vowels. Default is 0.5  
 
 #####
 ```c
@@ -267,26 +286,17 @@ float      singRoughness                (Singer* self                      );
 void       singSetRoughnessFreq         (Singer* self, float cps           );
 float      singRoughnessFreq            (Singer* self                      );
 ```
-
+You can add roughness to the singer's voice. If I recall corrrectly this uses ampitude modulation. The coefficent controlls how rough the sound is, and should range from 0 to 1, with the default being 0.1. The roughness frrequency is the frequency of the modulating signal and can range from 20 to 150 Hz. Default is 40.
 
 #####
 ```c
-void       singSetBrightness            (Singer* self, float coefficient   ); //-1 ~ 1, 0 is unaltered, neg is darker
+void       singSetBrightness            (Singer* self, float coefficient   );
 float      singBrightness               (Singer* self                      );
 ```
+This controlls a high-pass or low-pass filter that can make the singer's voice brighter or darker. The coefficient can range from -1 to 1 where 0 is unaltered, and negative is darker. Default is -0.2. Brightness plays an inportant role in pereceived loudness for the human voice, as nattural human singing voices increase in brightness as they get louder. Therefore it might be good practice to use this function together with singSetLoudness(); 
 
 #####
 ```c
 void       singShutYerPieHole           (Singer* self                      ); 
 ```
-
-
-#####
-```c
-void       singSetAllophoneSeparatorChar(Singer* self, char c              );
-char       singAllophoneSeparatorChar   (Singer* self                      );
-void       singSetRestChar              (Singer* self, char c              );
-char       singRestChar                 (Singer* self                      );
-void       singSetHoldChar              (Singer* self, char c              );
-char       singHoldChar                 (Singer* self                      );
-```
+Shut it.
