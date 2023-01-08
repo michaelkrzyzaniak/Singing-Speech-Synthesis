@@ -8,16 +8,16 @@ To get started, Singing-Speech-Synthesis needs a wavetable that it will use as t
 ## Getting Started Code Snipit
 ```c
 //Compile with
-//gcc *.c ../../lib/*.c
+//gcc *.c lib/*.c
 
-#include "../../Singer.h"
+#include "Singer.h"
 
 int main(void)
 {
   const int buffer_size = 128;
 
-  char* wavetable_aiff = "../../audio/wavetables/Cello_41.aiff";
-  char* allophone_folder = "../../audio/tenor_allophones/";
+  char* wavetable_aiff = "audio/wavetables/Cello_41.aiff";
+  char* allophone_folder = "audio/tenor_allophones/";
   
   Singer* singer = singNew(wavetable_aiff, allophone_folder, 44100, buffer_size);
 
@@ -34,8 +34,7 @@ int main(void)
       /* buffer now contains audio */
       /* do something with it here */
     }
-  
-  singDestroy(singer);
+
   return 0;
 }
 ```
@@ -54,18 +53,18 @@ int main(int argc, const char** argv)
   const int buffer_size = 128;
   const int sample_rate = 44100;
 
-  char* wavetable_aiff = "../../audio/wavetables/Cello_41.aiff";
-  char* allophone_folder = "../../audio/tenor_allophones/";
+  char* wavetable_aiff = "audio/wavetables/Cello_41.aiff";
+  char* allophone_folder = "audio/tenor_allophones/";
   
   Singer* singer = singNew(wavetable_aiff, allophone_folder, sample_rate, buffer_size);
   
-  float* buffer = calloc(buffer_size, sizeof(*buffer));
-
+  float buffer[buffer_size];
 
   char allophones[] = "a-|m|a-|r|i-|l|i-|m|i|a-| |b|e-|l|a-| -";
   singEnqueueAllophones(singer, allophones);
   singSetLoudness(singer, 0.5);
   
+  //1 sec per allophone
   int buffers_per_allophone = ceil(sample_rate / (double)buffer_size);
   int pitch = 60; //MIDI note middle c
   int i;
@@ -79,10 +78,9 @@ int main(int argc, const char** argv)
       for(i=0; i<buffers_per_allophone; i++)
         {
           singFillBuffer(singer, buffer, buffer_size);
+          //buffer is full of audio, do something with it here.
         }
       }
-  
-  singDestroy(singer);
   
   return 0;	
 }
@@ -173,30 +171,29 @@ You can get notifications when each allophone is triggered or when the queue is 
 * callbackArg can be anything that will be passed back to you as userData when the callback is called. 
 * allo will be the allophone that is going to be sung next, whereas calling singCurrentAllophone() from the callback will get the allophone that has just finished. Moe information about what can be done with the passed Allophone object is in lib/Allophone.h. Notably you can get the string representation of the allophone with alloSymbol(allo);
 
-
-
-#####
+##### Allophone Glide Time
 ```c
 void       singSetAllophoneGlideTime    (Singer* self, float coefficient   );
 float      singAllophoneGlideTime       (Singer* self                      );
 ```
 The algorithm will quickly interpolate between successive allophones. The coefficient should be betweeen 0 and 1, with higher values indicating a longer transition time. Default is 0.6.
 
-#####
+##### Supported Allophones
 ```c
 char**     singSupportedAllophones      (Singer* self, int* returnedNumAllophones); /*caller must free retunred array when done (but not the strings therein)*/
 void       singPrintSupportedAllophones (Singer* self                      );
 ```
 Get or print a list of supported allophones. Printing the list will also tell you if the algorithm considers each allophone to be a plosive, fricative, or vowel. It also prints the bytes representting the allophone symbols, which can be useful if the allophone has a filename such as ð.aiff and there are char eencoding issues. 
 
-#####
+##### Consonant Duration
 ```c
 void       singSetConsonantDuration     (Singer* self, float millisecs     );
 float      singConsonantDuration        (Singer* self                      );
 ```
+Controls how long a consonant should last when it is not held. Default is 100 milliseconds.
 
 ## Pitch Loudness and Timbre
-#####
+##### Set Freq, Set Pitch
 ```c
 void       singSetFreq                  (Singer* self, float cps, BOOL shouldTriggerVibrato);
 float      singFreq                     (Singer* self                      );
@@ -212,7 +209,7 @@ Args:
 * coefficient: controls how quickly the singer glides to the nwe note. Should be betweeen 0 and 1, where 0 means no glide (jumps to the new note) and higher values indicate a longer glide. Default is 0.999. 
 
 
-#####
+##### Set Freq Drift
 ```c
 void       singSetFreqDrift             (Singer* self, float percent       );
 float      singFreqDrift                (Singer* self                      );
@@ -223,7 +220,7 @@ Args:
 
 
 
-#####
+##### Vibrato
 ```c
 void       singSetVibratoRate           (Singer* self, float cps           );
 float      singVibratoRate              (Singer* self                      );
@@ -239,7 +236,7 @@ void       singTriggerVibrato           (Singer* self                      );
 ```
 Control the singer's vibrato. Default rate is 6 Hz. Default depth is 1, indicating plus or minus 1 percent of current pitch. Both the rate and depth drift over time to make it sound more natural. Default rate drift coeficient is 0.05, default depth drift coefficient is 0.1. Setting either coefficient to 0 turns it off, with higher values meaning more drift. Note that the drift is unbounded over time. By default the singer will start singing straight and gradually increase the vibrato depth. Thee vibrato onset time controls how long it takes to achieve full vibrato depth. Default is 0.999992, with 0  indicating immediate onset and higher values (less than 1) indicating longer onseet time. By default the vibrato will just keep going forever, but calling singTriggerVibrato() resets all of the drift values and makes the singer sing straight, gradually bringing in the vibrato again. Triggering the vibrrato can also be done by passing YES to the shouldTriggerVibrato argument of singSetFreq() or singSetPitch();
 
-#####
+##### Loudness, Loudness Glide Time 
 ```c
 void       singSetLoudness              (Singer* self, float amp           );
 float      singLoudness                 (Singer* self                      );
@@ -252,34 +249,34 @@ Get or set the amplitude (not perceptual loudness) of the output. In principal i
 
 
 
-#####
+##### Plosive Crunchiness
 ```c
 void       singSetPlosiveCrunchiness    (Singer* self, float crunchiness   );
 float      singPlosiveCrunchiness       (Singer* self                      );
 ```
 This controls the amplitude of noise in plosives and fricatives. Default is 2.5.
 
-#####
+##### Breathiness
 ```c
 void       singSetBreathiness           (Singer* self, float breathiness   );
 float      singBreathiness              (Singer* self                      );
 ```
 This controls the amplitude of noise in vowels. Default is 4. RRange is 0 to 100.
 
-#####
+##### Noise Smoothing
 ```c
 void       singSetNoiseSmoothing        (Singer* self, float coefficient   );
 float      singNoiseSmoothing           (Singer* self                      );
 ```
 When the singer transitions from one allophone to another, the amount of noisiness depends on 1) the intrinsic noisiness of the allophone recording, and 2) the settings of singSetBreathiness() or singSetPlosiveCrunchiness(). To smooth out the transition, thee singer can interpolate between the noise levels. By default, coefficient is 0 meaning there is no interpolation and the transition is immediate. Larger coefficient meeans longer transition. Must be less than one.
 
-#####
+##### Relative Vowel Volume
 ```c
 void       singSetRelativeVowelVolume   (Singer* self, float coefficient   );
 ```
-Seet the amplitude of vowels relative to consonants. Should be 0 to 1 inclusive. Higher values make louder vowels. If coefficient is less than 0.5 this is accomplished by raising the amplitude of consonants, otherwise it raises the amplitude of vowels. Default is 0.5  
+Seet the amplitude of vowels relative to consonants. Should be 0 to 1 inclusive. Higher values make louder vowels. If coefficient is less than 0.5 this is accomplished by raising the amplitude of consonants, otherwise it raises the amplitude of vowels. Default is 0.5. I don't know why there is no getter method.  
 
-#####
+##### Roughness
 ```c
 void       singSetRoughness             (Singer* self, float coefficient   );
 float      singRoughness                (Singer* self                      );
@@ -288,14 +285,14 @@ float      singRoughnessFreq            (Singer* self                      );
 ```
 You can add roughness to the singer's voice. If I recall corrrectly this uses ampitude modulation. The coefficent controlls how rough the sound is, and should range from 0 to 1, with the default being 0.1. The roughness frrequency is the frequency of the modulating signal and can range from 20 to 150 Hz. Default is 40.
 
-#####
+##### Brightness
 ```c
 void       singSetBrightness            (Singer* self, float coefficient   );
 float      singBrightness               (Singer* self                      );
 ```
 This controlls a high-pass or low-pass filter that can make the singer's voice brighter or darker. The coefficient can range from -1 to 1 where 0 is unaltered, and negative is darker. Default is -0.2. Brightness plays an inportant role in pereceived loudness for the human voice, as nattural human singing voices increase in brightness as they get louder. Therefore it might be good practice to use this function together with singSetLoudness(); 
 
-#####
+##### Shut Up
 ```c
 void       singShutYerPieHole           (Singer* self                      ); 
 ```
