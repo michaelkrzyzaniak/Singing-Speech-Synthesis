@@ -14,7 +14,7 @@ To get started, Singing-Speech-Synthesis needs a wavetable that it will use as t
 
 int main(void)
 {
-  const int buffer_size = 128;
+  const int buffer_size = 1024;
 
   char* wavetable_aiff = "audio/wavetables/Cello_41.aiff";
   char* allophone_folder = "audio/tenor_allophones/";
@@ -50,7 +50,7 @@ Alternatively, a sequence of allophones can be enqueued and then triggered in su
 
 int main(int argc, const char** argv)
 {
-  const int buffer_size = 128;
+  const int buffer_size = 1024;
   const int sample_rate = 44100;
 
   char* wavetable_aiff = "audio/wavetables/Cello_41.aiff";
@@ -101,7 +101,7 @@ Args:
 * pathToWavetableAiff: path of an aiff or wave file containing a single cycle of a waveform that will be used as the basis of wavetable synthesis. Try "/audio/wavetables/Cello_41.aiff".
 * pathToAllophoneAiffs: path of a folder containing allophone recordings. "audio/tenor_allophones/". Silence should be trimmed off the begining and end of the recording. In principal the software could be made to do this in the future and if you send me some cookies I might do that. The file extension should be .aif or .aiff, but wave files should work just so long as they have the (wrong) .aif extension.
 * sampleRate your desired audio sample rate, perhaps 44100 would be a good choice.
-* bufferNumSamples this controls the size of the underlying FFTs. It could be anythhing but maybe try a power of 2 somewhere between 128 and 4096.
+* bufferNumSamples this controls the size of the underlying FFTs. It could be anythhing but maybe try a power of 2 somewhere between 128 and 4096. Smaller values give higher time resolution and larger give better frequency resolution. 1024 seeems like a good tradeoff. 
 
 
 ##### Destroy
