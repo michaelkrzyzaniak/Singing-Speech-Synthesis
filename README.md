@@ -161,7 +161,7 @@ typedef void (*singEventCallback_t)     (void* userData, Allophone* allo);
 void       singSetAllophoneCallback     (Singer* self, singEventCallback_t callback, void* callbackArg);
 void       singSetQueueEmptyCallback    (Singer* self, singEventCallback_t callback, void* callbackArg);
 
-'''
+```
 Instead of setting allophones one at a time, you can program in a whole song by enqueuing a list of allophones. See the code snipit at the top of this document for more information on how this works. 
 
 Args:
