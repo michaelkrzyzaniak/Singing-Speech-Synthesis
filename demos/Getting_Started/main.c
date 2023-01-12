@@ -5,7 +5,7 @@
 
 int main(void)
 {
-  const int buffer_size = 128;
+  const int buffer_size = 1024;
 
   char* wavetable_aiff = "../../audio/wavetables/Cello_41.aiff";
   char* allophone_folder = "../../audio/tenor_allophones/";

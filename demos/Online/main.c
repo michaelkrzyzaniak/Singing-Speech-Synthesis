@@ -45,8 +45,8 @@ int main(int argc, const char** argv)
   singSetQueueEmptyCallback(sing, queueEmptied   , NULL);
 
   
-  singSetVibratoDepth(sing, 0);
-  singSetVibratoDepthDrift(sing, 0);
+  //singSetVibratoDepth(sing, 0);
+  //singSetVibratoDepthDrift(sing, 0);
 
   //////////FOR SHUHSI ONLY!!!!!!!
   //singSetFreqGlideTime(sing, 0.99975);
@@ -80,7 +80,10 @@ int main(int argc, const char** argv)
     {
       *c = getchar();
       if(((*c >= 'a') && (*c <= 'z')) || (*c == ','))
-        singSetAllophone(sing, c);
+        {
+          singSetAllophone(sing, c);
+          singTriggerVibrato(sing);
+        }
       else
         {
           switch(*c)

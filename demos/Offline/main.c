@@ -10,7 +10,7 @@
 /*------------------------------------------------------------------------------------*/
 int main(int argc, const char** argv)
 {
-  const int buffer_size = 128;
+  const int buffer_size = 1024;
   const int sample_rate = 44100;
   const int recording_seconds = 10;
 
