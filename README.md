@@ -1,7 +1,7 @@
 # Singing-Speech-Synthesis
 Singing-Speech-Synthesis is an ANSI C library that sings in real time. It sings vowels and consonants. Just tell it what notes and allophones you want it to sing. Then feed empty buffers into it, and it will fill them with audio, with which you can do as you please. It requires no external libraries or packages, and has no platform-dependent code. It was designed to run on ebmedded linux computers in musical robots, and It should run on anything.
 
-A demo of Singing-Speech-Synthesis is on Youtube.
+A demo of Singing-Speech-Synthesis is on Youtube https://www.youtube.com/watch?v=dBIjMYdX7bI
 
 To get started, Singing-Speech-Synthesis needs a wavetable that it will use as the basis of the sound it makes. There are a few demo wavetables in audio/wavetables. Then Singing-Speech-Synthesis also needs a recording of each allophone you want it to be able to sing. There is a demo set of allophones in audio/tenor_allophones/, which I crappily recorded into my laptop while sitting in my parent's living room several years ago. Singing-Speech-Synthesis will figure out whether each allophone is a vowel, plosive or fricative by analyzing the recordings. Then you can tell it what pitches and allophone to sing. 
 
